@@ -46,7 +46,11 @@
   }
 %}
 
-Keyword {stdio}|{stdfile}|{stdchio}|{stdblio}|{stdfilepos}|{stderror}|"void"|"int"|"double"|"bool"|"char"|"null"|"for"|"while"|"do"|"if"|"else"|"switch"|"return"|"break"|"continue"|"const"|"true"|"false"|"struct"|"case"|"default"
+Keyword {stdio}|{stdfile}|{stdchio}|{stdblio}|{stdfilepos}|{stderror}|"null"|"for"|"while"|"do"|"if"|"else"|"switch"|"return"|"break"|"continue"|"struct"|"case"|"default"
+Type_key "int"|"double"|"bool"|"char"
+Void_key "void"
+Const_key "const"
+True_False "true"|"false"
 stdio "printf"|"scanf"|"fprintf"|"fscanf"|"sprintf"|"sscanf"|"vfprintf"|"vprintf"|"vsprintf"
 stdfile "fclose"|"fflush"|"fopen"|"freopen"|"remove"|"rename"|"setbuf"|"setvbuf"|"tmpfile"|"tmpnam"
 stdchio "fgetc"|"fgets"|"fputc"|"fputs"|"getc"|"getchar"|"gets"|"putc"|"putchar"|"puts"|"ungetc"
@@ -57,7 +61,8 @@ stderror "clearerr"|"feof"|"ferror"|"perror"
 And_operator "&&"
 Or_operator "||"
 Modify_operator "+"|"-"|"*"|"%"|"/"
-Unary_operator "!"|"&"|"++"|"--"
+Left_unary_operator "!"|"&"
+Right_unary_operator "++"|"--"
 Compare_operator "<"|"<="|">"|">="|"=="|"!="
 Assign_operator "="
 
@@ -227,20 +232,41 @@ Quote "\""
 <LINE>{Keyword} {
   printToken("key");
 }
+<LINE>{Type_key} {
+  printToken("key");
+  return Type_key;
+}
+<LINE>{Void_key} {
+  printToken("key");
+  return Void_key;
+}
+<LINE>{Const_key} {
+  printToken("key");
+  return Const_key;
+}
+<LINE>{True_False} {
+  printToken("key");
+  return True_False;
+}
 <LINE>{Assign_operator} {
   printToken("op");
   yylval.char_op = yytext[0];
-  return Assign_operator;
+  return yytext[0];
 }
 <LINE>{Compare_operator} {
   printToken("op");
   strcpy(yylval.str_op, yytext);
   return Compare_operator;
 }
-<LINE>{Unary_operator} {
+<LINE>{Left_unary_operator} {
   printToken("op");
   strcpy(yylval.str_op, yytext);
-  return Unary_operator;
+  return Left_unary_operator;
+}
+<LINE>{Right_unary_operator} {
+  printToken("op");
+  strcpy(yylval.str_op, yytext);
+  return Right_unary_operator;
 }
 <LINE>{Modify_operator} {
   printToken("op");
