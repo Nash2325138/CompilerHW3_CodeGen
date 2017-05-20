@@ -1,0 +1,7 @@
+lex.yy.c
+parser
+y.tab.h
+y.tab.c
+yacc.report
+test.c
+test/
