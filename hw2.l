@@ -260,7 +260,7 @@ Quote "\""
 <LINE>{Punctuation} {
   printToken("punc");
   yylval.punctuation = yytext[0];
-  return Punctuation;
+  return yytext[0];
 }
 <LINE>{ID}  {
   printToken("id");

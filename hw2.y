@@ -1,12 +1,15 @@
 %{
     #include <stdio.h>
     #include <stdlib.h>
+    #include "y.tab.h"
     #define GREEN "\033[0;32;32m"
     #define NONE "\033[m"
+
     extern char* yytext;
     extern int lineCount;
-    extern char* lineStr;
+    extern char lineStr[10000];
     int yylex();
+    int yyerror(char *msg);
     void print_grammer_used(const char* str) {
         printf(GREEN "%s" NONE, str);
     }
@@ -74,30 +77,42 @@
 
 %%
 
-program: expr {
-    print_grammer_used("(Reduce expr to program)\n");
+program: exprs {
+    print_grammer_used("(expr to program)\n");
 }
+exprs: exprs expr
+    | %empty
 expr: expr '+' expr{
-    print_grammer_used("(Reduce expr '+' expr to expr)\n");
+    print_grammer_used("(expr '+' expr to expr)\n");
 }
 | expr '-' expr {
-    print_grammer_used("(Reduce expr '-' expr to expr)\n");
+    print_grammer_used("(expr '-' expr to expr)\n");
 }
 | expr '*' expr {
-    print_grammer_used("(Reduce expr '*' expr to expr)\n");
+    print_grammer_used("(expr '*' expr to expr)\n");
 }
 | expr '/' expr {
-    print_grammer_used("(Reduce expr '/' expr to expr)\n");
+    print_grammer_used("(expr '/' expr to expr)\n");
 }
 | expr '%' expr {
-    print_grammer_used("(Reduce expr '%%' expr to expr)\n");
+    print_grammer_used("(expr '%%' expr to expr)\n");
 }
 | Int {
-    print_grammer_used("(Reduce Int to expr)\n");
+    print_grammer_used("(Int to expr)\n");
 }
 | ID {
-    print_grammer_used("(Reduce ID to expr)\n");
+    print_grammer_used("(ID to expr)\n");
 }
+| function_call {
+    print_grammer_used("(function_call to expr)\n");
+}
+
+function_call: ID '(' para_list ')'
+para_list: para para_list2
+    | %empty 
+para_list2: ',' para para_list2
+    | %empty
+para: Int
 
 %%
 
@@ -109,10 +124,10 @@ int main(void)
 }
 
 int yyerror(char *msg){
-    fprintf( stderr, "*** Error at line %d: %s\n", lineCount, lineStr);
-    fprintf( stderr, "\n" );
-    fprintf( stderr, "Unmatched token: %s\n", yytext);
-    fprintf( stderr, "*** syntax error\n");
+    fprintf(stderr, "*** Error at line %d: %s\n", lineCount, lineStr);
+    fprintf(stderr, "\n" );
+    fprintf(stderr, "Unmatched token: %s\n", yytext);
+    fprintf(stderr, "*** syntax error\n");
     exit(-1);
 }
 
