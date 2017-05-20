@@ -87,15 +87,36 @@
 
 %%
 
-program: type_id_declare_list
-| exprs
+program: mix_declare_list
 | %empty
 
-type_id_declare_list: type_id_declare ';'
-| type_id_declare ';' type_id_declare_list
+
+
+mix_declare_list: mix_declare ';'
+| mix_declare ';' mix_declare_list
+
+mix_declare: func_declare
+| type_id_declare
+| const_id_declare
+
+
+
+func_declare: Type_key ID '(' declare_para_list ')'
+| Type_key ID '(' ')'
+
+declare_para_list: declare_para
+| declare_para ',' declare_para_list
+
+declare_para: Type_key ID array_size_list
+
+
+// type_id_declare_list: type_id_declare ';'
+// | type_id_declare ';' type_id_declare_list
 
 type_id_declare: Type_key id_declare_list
 | Const_key Type_key const_id_declare_list
+
+
 
 const_id_declare_list: const_id_declare ',' const_id_declare_list
 | const_id_declare
@@ -107,6 +128,8 @@ const_ID_inital: '=' expr
 const_array_initial: '=' '{' expr_list '}'
 | '=' '{' '}'
 
+
+
 id_declare_list: id_declare ',' id_declare_list
 | id_declare
 
@@ -115,6 +138,7 @@ id_declare: ID ID_inital
 
 ID_inital: %empty
 | '=' expr
+
 
 array_size_list: '[' Int ']' array_size_list
 | %empty
@@ -126,8 +150,7 @@ array_initial: %empty
 expr_list: expr ',' expr_list
 | expr
 
-exprs: expr ',' exprs
-| expr
+
 
 expr: expr '+' expr{print_grammer_used("(expr '+' expr to expr)\n");}
 | expr '-' expr {print_grammer_used("(expr '-' expr to expr)\n");}
