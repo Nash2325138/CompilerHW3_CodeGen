@@ -63,15 +63,18 @@
 
 %type <punctuation> ':' ';' ',' '.' '[' ']' '(' ')' '{' '}'
 
+// %left ';'
+// %left ','
+%right '='
 %left Or_operator
 %left And_operator
 %nonassoc Left_unary_operator
 %left Compare_operator
-%right '='
 %left '+' '-'
 %left '*' '/' '%'
 %nonassoc UMINUS
 %nonassoc Right_unary_operator
+%left '[' ']'
 
 // %left SCSPEC TYPESPEC TYPEMOD
 // %left  ','
@@ -87,7 +90,8 @@
 
 %%
 
-program: mix_declare_list
+program: '{' stmt_list '}'
+| mix_declare_list
 | %empty
 
 
@@ -149,6 +153,20 @@ array_initial: %empty
 
 expr_list: expr ',' expr_list
 | expr
+
+
+
+
+
+
+stmt_list: stmt ';'
+| stmt ';' stmt_list
+
+stmt: simple_stmt
+
+simple_stmt: var '=' expr
+
+
 
 
 

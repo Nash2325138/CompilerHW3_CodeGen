@@ -4,5 +4,5 @@ parser: hw2.l hw2.y
 	gcc -o parser lex.yy.c y.tab.c
 clean:
 	rm -f lex.yy.c parser y.tab.h y.tab.c yacc.report
-test: parser ./test/2.c
-	./parser < ./test/2.c
+test: parser ./test/3.c
+	./parser < ./test/3.c
