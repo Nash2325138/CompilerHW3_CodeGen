@@ -90,78 +90,65 @@
 
 %%
 
-program: '{' stmt_list '}'
-| mix_declare_list
-| %empty
+program: compound_statements
+        | mix_declare_list
+        | %empty
 
+
+
+
+
+
+compound_statements: '{' type_id_declare_list stmt_list '}'
 
 
 mix_declare_list: mix_declare ';'
-| mix_declare ';' mix_declare_list
-
+        | mix_declare ';' mix_declare_list
 mix_declare: func_declare
-| type_id_declare
-| const_id_declare
-
+        | type_id_declare
 
 
 func_declare: Type_key ID '(' declare_para_list ')'
-| Type_key ID '(' ')'
-
+        | Type_key ID '(' ')'
 declare_para_list: declare_para
-| declare_para ',' declare_para_list
-
+        | declare_para ',' declare_para_list
 declare_para: Type_key ID array_size_list
 
-
-// type_id_declare_list: type_id_declare ';'
-// | type_id_declare ';' type_id_declare_list
-
+type_id_declare_list: %empty
+| type_id_declare ';' type_id_declare_list
 type_id_declare: Type_key id_declare_list
-| Const_key Type_key const_id_declare_list
-
+        | Const_key Type_key const_id_declare_list
 
 
 const_id_declare_list: const_id_declare ',' const_id_declare_list
-| const_id_declare
-
+        | const_id_declare
 const_id_declare: ID const_ID_inital
-| ID '[' Int ']' array_size_list const_array_initial
-
+        | ID '[' Int ']' array_size_list const_array_initial
 const_ID_inital: '=' expr
 const_array_initial: '=' '{' expr_list '}'
-| '=' '{' '}'
-
+        | '=' '{' '}'
 
 
 id_declare_list: id_declare ',' id_declare_list
-| id_declare
-
+        | id_declare
 id_declare: ID ID_inital
-| ID '[' Int ']' array_size_list array_initial
-
+        | ID '[' Int ']' array_size_list array_initial
 ID_inital: %empty
-| '=' expr
+        | '=' expr
 
 
 array_size_list: '[' Int ']' array_size_list
-| %empty
-
+        | %empty
 array_initial: %empty
-| '=' '{' expr_list '}'
-| '=' '{' '}'
-
+        | '=' '{' expr_list '}'
+        | '=' '{' '}'
 expr_list: expr ',' expr_list
-| expr
+        | expr
 
 
 
-
-
-
-stmt_list: stmt ';'
-| stmt ';' stmt_list
-
+stmt_list: %empty
+        | stmt ';' stmt_list
 stmt: simple_stmt
 
 simple_stmt: var '=' expr
@@ -171,41 +158,37 @@ simple_stmt: var '=' expr
 
 
 expr: expr '+' expr{print_grammer_used("(expr '+' expr to expr)\n");}
-| expr '-' expr {print_grammer_used("(expr '-' expr to expr)\n");}
-| expr '*' expr {print_grammer_used("(expr '*' expr to expr)\n");}
-| expr '/' expr {print_grammer_used("(expr '/' expr to expr)\n");}
-| expr '%' expr {print_grammer_used("(expr '%%' expr to expr)\n");}
-| expr And_operator expr {print_grammer_used("(expr && expr to expr)\n");}
-| expr Or_operator expr {print_grammer_used("(expr || expr to expr)\n");}
-| const_value {print_grammer_used("(const_value to expr)\n");}
-| Left_unary_operator var {}
-| var Right_unary_operator {}
-| '-' expr %prec UMINUS {}
-| function_call {print_grammer_used("(function_call to expr)\n");}
-| var {print_grammer_used("(var to expr)\n");}
+        | expr '-' expr {print_grammer_used("(expr '-' expr to expr)\n");}
+        | expr '*' expr {print_grammer_used("(expr '*' expr to expr)\n");}
+        | expr '/' expr {print_grammer_used("(expr '/' expr to expr)\n");}
+        | expr '%' expr {print_grammer_used("(expr '%%' expr to expr)\n");}
+        | expr And_operator expr {print_grammer_used("(expr && expr to expr)\n");}
+        | expr Or_operator expr {print_grammer_used("(expr || expr to expr)\n");}
+        | const_value {print_grammer_used("(const_value to expr)\n");}
+        | Left_unary_operator var {}
+        | var Right_unary_operator {}
+        | '-' expr %prec UMINUS {}
+        | function_call {print_grammer_used("(function_call to expr)\n");}
+        | var {print_grammer_used("(var to expr)\n");}
 
 const_value: Int
-| Float
-| SciNum
-| True_False
-| String
-| Char
+        | Float
+        | SciNum
+        | True_False
+        | String
+        | Char
 
 var: ID locate_list
-
 locate_list: '[' expr ']' locate_list
-| %empty
+        | %empty
 
 function_call: ID '(' para_list ')'
-
 para_list: para para_list2
-| %empty 
-
+        | %empty 
 para_list2: ',' para para_list2
-| %empty
-
+        | %empty
 para: const_value
-| var
+        | var
 
 %%
 
