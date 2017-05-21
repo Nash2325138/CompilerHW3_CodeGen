@@ -317,8 +317,8 @@ Quote "\""
 }
 <LINE>{Left_unary_operator} {
   printToken("op");
-  strcpy(yylval.str_op, yytext);
-  return Left_unary_operator;
+  yylval.char_op = yytext[0];
+  return yytext[0];
 }
 <LINE>{Right_unary_operator} {
   printToken("op");

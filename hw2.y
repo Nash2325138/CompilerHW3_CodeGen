@@ -65,7 +65,7 @@
 
 //
 %type <char_op> '+' '-' '/' '%' '*'
-%type <str_op> Left_unary_operator
+%type <str_op> '!' '&'
 %type <str_op> Right_unary_operator
 %type <str_op> Compare_operator
 %type <str_op> Or_operator
@@ -79,7 +79,7 @@
 %right '='
 %left Or_operator
 %left And_operator
-%nonassoc Left_unary_operator
+%nonassoc '!' '&'
 %left Compare_operator
 %left '+' '-'
 %left '*' '/' '%'
@@ -175,6 +175,18 @@ stmt: simple_stmt ';' {
         | while_stmt {
             print_grammer_used("while_stmt to stmt\n");
         }
+        | do_while_stmt {
+            print_grammer_used("do_while_stmt to stmt\n");
+        }
+        | for_stmt {
+            print_grammer_used("for_stmt to stmt\n");
+        }
+        | switch_stmt {
+            print_grammer_used("switch_stmt to stmt\n");
+        }
+        | Return_key expr ';'
+        | Break_key ';'
+        | Continue_key ';'
 
 simple_stmt: var '=' expr
 
@@ -182,6 +194,20 @@ if_else_stmt: If_key '(' expr ')' compound_statements
         | If_key '(' expr ')' compound_statements Else_key compound_statements
 
 while_stmt: While_key '(' expr ')' compound_statements
+
+do_while_stmt: Do_key compound_statements While_key '(' expr ')' ';'
+
+for_stmt: For_key '(' nullable_expr ';' nullable_expr ';' nullable_expr ')' compound_statements
+nullable_expr: expr
+        | %empty
+
+switch_stmt: Switch_key '(' ID ')' '{' case_stmt case_list '}'
+case_list: case_stmt case_list
+        | case_stmt 
+        | Default_key ':' stmt_list
+case_stmt: Case_key int_char_constant ':' stmt_list
+int_char_constant: Int
+        | Char
 
 
 expr: expr '+' expr
@@ -192,8 +218,9 @@ expr: expr '+' expr
         | expr And_operator expr 
         | expr Or_operator expr 
         | expr Compare_operator expr
+        | '!' expr
         | const_value 
-        | Left_unary_operator var 
+        | '&' var 
         | var Right_unary_operator 
         | '-' expr %prec UMINUS 
         | function_call 
@@ -210,13 +237,14 @@ var: ID locate_list
 locate_list: '[' expr ']' locate_list
         | %empty
 
-function_call: ID '(' para_list ')'
-para_list: para para_list2
-        | %empty 
-para_list2: ',' para para_list2
-        | %empty
-para: const_value
-        | var
+function_call: ID '(' expr_list ')'
+        | ID '(' ')'
+// para_list: para para_list2
+//         | %empty 
+// para_list2: ',' para para_list2
+//         | %empty
+// para: const_value
+//         | var
 
 %%
 
