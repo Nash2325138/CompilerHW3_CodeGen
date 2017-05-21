@@ -57,6 +57,7 @@
 %token Continue_key
 %token Case_key
 %token Default_key
+%token Function_key
 
 %type <integer> Int
 %type <ident> ID
@@ -118,10 +119,12 @@ mix_declare: func_declare
         | type_id_declare
 
 
-func_declare: Type_key ID '(' declare_para_list ')'
-        | Void_key ID '(' declare_para_list ')'
-        | Type_key ID '(' ')'
-        | Void_key ID '(' ')'
+func_declare: Type_key func_ID '(' declare_para_list ')'
+        | Void_key func_ID '(' declare_para_list ')'
+        | Type_key func_ID '(' ')'
+        | Void_key func_ID '(' ')'
+func_ID: ID
+        | Function_key
 declare_para_list: declare_para
         | declare_para ',' declare_para_list
 declare_para: Type_key ID array_size_list
@@ -187,6 +190,7 @@ stmt: simple_stmt ';' {
         | Return_key expr ';'
         | Break_key ';'
         | Continue_key ';'
+        | function_call ';'
 
 simple_stmt: var '=' expr
 
@@ -225,6 +229,7 @@ expr: expr '+' expr
         | '-' expr %prec UMINUS 
         | function_call 
         | var 
+        | '(' expr ')'
 
 const_value: Int
         | Float
@@ -237,8 +242,8 @@ var: ID locate_list
 locate_list: '[' expr ']' locate_list
         | %empty
 
-function_call: ID '(' expr_list ')'
-        | ID '(' ')'
+function_call: func_ID '(' expr_list ')'
+        | func_ID '(' ')'
 // para_list: para para_list2
 //         | %empty 
 // para_list2: ',' para para_list2

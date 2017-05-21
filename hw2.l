@@ -46,7 +46,8 @@
   }
 %}
 
-Keyword {stdio}|{stdfile}|{stdchio}|{stdblio}|{stdfilepos}|{stderror}|"null"|"struct"
+Keyword "null"|"struct"
+Function_key {stdio}|{stdfile}|{stdchio}|{stdblio}|{stdfilepos}|{stderror}
 Type_key "int"|"double"|"bool"|"char"
 Void_key "void"
 Const_key "const"
@@ -242,6 +243,10 @@ Quote "\""
 }
 <LINE>{Keyword} {
   printToken("key");
+}
+<LINE>{Function_key} {
+  printToken("Key");
+  return Function_key;
 }
 <LINE>{Type_key} {
   printToken("key");
