@@ -11,7 +11,7 @@
     int yylex();
     int yyerror(char *msg);
     void print_grammer_used(const char* str) {
-        // printf(GREEN "%s" NONE, str);
+        printf(GREEN "%s" NONE, str);
     }
 %}
 
@@ -46,6 +46,17 @@
 %token Void_key
 %token Const_key
 %token True_False
+%token For_key
+%token While_key
+%token Do_key
+%token If_key
+%token Else_key
+%token Switch_key
+%token Return_key
+%token Break_key
+%token Continue_key
+%token Case_key
+%token Default_key
 
 %type <integer> Int
 %type <ident> ID
@@ -90,32 +101,33 @@
 
 %%
 
-program: compound_statements
-        | mix_declare_list
+program: program_element_list
+
+program_element_list: mix_declare ';' program_element_list
+        | func_definition program_element_list2
+program_element_list2: program_element program_element_list2
         | %empty
-
-
-
-
+program_element: mix_declare ';'
+        | func_definition
 
 
 compound_statements: '{' type_id_declare_list stmt_list '}'
 
 
-mix_declare_list: mix_declare ';'
-        | mix_declare ';' mix_declare_list
 mix_declare: func_declare
         | type_id_declare
 
 
 func_declare: Type_key ID '(' declare_para_list ')'
+        | Void_key ID '(' declare_para_list ')'
         | Type_key ID '(' ')'
+        | Void_key ID '(' ')'
 declare_para_list: declare_para
         | declare_para ',' declare_para_list
 declare_para: Type_key ID array_size_list
 
 type_id_declare_list: %empty
-| type_id_declare ';' type_id_declare_list
+        | type_id_declare ';' type_id_declare_list
 type_id_declare: Type_key id_declare_list
         | Const_key Type_key const_id_declare_list
 
@@ -146,30 +158,46 @@ expr_list: expr ',' expr_list
         | expr
 
 
+func_definition: func_declare compound_statements 
+
 
 stmt_list: %empty
-        | stmt ';' stmt_list
-stmt: simple_stmt
+        | stmt stmt_list
+stmt: simple_stmt ';' {
+            print_grammer_used("simple_stmt ';' to stmt\n");
+        }
+        | if_else_stmt {
+            print_grammer_used("if_else_stmt ';' to stmt\n");
+        }
+        | ';' {
+            print_grammer_used("';' to stmt\n");
+        }
+        | while_stmt {
+            print_grammer_used("while_stmt to stmt\n");
+        }
 
 simple_stmt: var '=' expr
 
+if_else_stmt: If_key '(' expr ')' compound_statements
+        | If_key '(' expr ')' compound_statements Else_key compound_statements
+
+while_stmt: While_key '(' expr ')' compound_statements
 
 
-
-
-expr: expr '+' expr{print_grammer_used("(expr '+' expr to expr)\n");}
-        | expr '-' expr {print_grammer_used("(expr '-' expr to expr)\n");}
-        | expr '*' expr {print_grammer_used("(expr '*' expr to expr)\n");}
-        | expr '/' expr {print_grammer_used("(expr '/' expr to expr)\n");}
-        | expr '%' expr {print_grammer_used("(expr '%%' expr to expr)\n");}
-        | expr And_operator expr {print_grammer_used("(expr && expr to expr)\n");}
-        | expr Or_operator expr {print_grammer_used("(expr || expr to expr)\n");}
-        | const_value {print_grammer_used("(const_value to expr)\n");}
-        | Left_unary_operator var {}
-        | var Right_unary_operator {}
-        | '-' expr %prec UMINUS {}
-        | function_call {print_grammer_used("(function_call to expr)\n");}
-        | var {print_grammer_used("(var to expr)\n");}
+expr: expr '+' expr
+        | expr '-' expr 
+        | expr '*' expr 
+        | expr '/' expr 
+        | expr '%' expr 
+        | expr And_operator expr 
+        | expr Or_operator expr 
+        | expr Compare_operator expr
+        | const_value 
+        | Left_unary_operator var 
+        | var Right_unary_operator 
+        | '-' expr %prec UMINUS 
+        | function_call 
+        | var 
 
 const_value: Int
         | Float

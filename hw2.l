@@ -46,11 +46,22 @@
   }
 %}
 
-Keyword {stdio}|{stdfile}|{stdchio}|{stdblio}|{stdfilepos}|{stderror}|"null"|"for"|"while"|"do"|"if"|"else"|"switch"|"return"|"break"|"continue"|"struct"|"case"|"default"
+Keyword {stdio}|{stdfile}|{stdchio}|{stdblio}|{stdfilepos}|{stderror}|"null"|"struct"
 Type_key "int"|"double"|"bool"|"char"
 Void_key "void"
 Const_key "const"
 True_False "true"|"false"
+For_key "for"
+While_key "while"
+Do_key "do"
+If_key "if"
+Else_key "else"
+Switch_key "switch"
+Return_key "return"
+Break_key "break"
+Continue_key "continue"
+Case_key "case"
+Default_key "default"
 stdio "printf"|"scanf"|"fprintf"|"fscanf"|"sprintf"|"sscanf"|"vfprintf"|"vprintf"|"vsprintf"
 stdfile "fclose"|"fflush"|"fopen"|"freopen"|"remove"|"rename"|"setbuf"|"setvbuf"|"tmpfile"|"tmpnam"
 stdchio "fgetc"|"fgets"|"fputc"|"fputs"|"getc"|"getchar"|"gets"|"putc"|"putchar"|"puts"|"ungetc"
@@ -248,6 +259,52 @@ Quote "\""
   printToken("key");
   return True_False;
 }
+
+<LINE>{For_key} {
+  printToken("Key");
+  return For_key;
+}
+<LINE>{While_key} {
+  printToken("Key");
+  return While_key;
+}
+<LINE>{Do_key} {
+  printToken("Key");
+  return Do_key;
+}
+<LINE>{If_key} {
+  printToken("Key");
+  return If_key;
+}
+<LINE>{Else_key} {
+  printToken("Key");
+  return Else_key;
+}
+<LINE>{Switch_key} {
+  printToken("Key");
+  return Switch_key;
+}
+<LINE>{Return_key} {
+  printToken("Key");
+  return Return_key;
+}
+<LINE>{Break_key} {
+  printToken("Key");
+  return Break_key;
+}
+<LINE>{Continue_key} {
+  printToken("Key");
+  return Continue_key;
+}
+<LINE>{Case_key} {
+  printToken("Key");
+  return Case_key;
+}
+<LINE>{Default_key} {
+  printToken("Key");
+  return Default_key;
+}
+
 <LINE>{Assign_operator} {
   printToken("op");
   yylval.char_op = yytext[0];
