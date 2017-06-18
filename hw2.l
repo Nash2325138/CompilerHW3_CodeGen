@@ -46,6 +46,11 @@
   }
 %}
 
+DigitalWrite "digitalWrite"
+LOW "LOW"
+HIGH "HIGH"
+Delay "delay"
+
 Keyword "null"|"struct"
 Function_key {stdio}|{stdfile}|{stdchio}|{stdblio}|{stdfilepos}|{stderror}
 Type_key "int"|"double"|"bool"|"char"
@@ -350,6 +355,24 @@ Quote "\""
   yylval.punctuation = yytext[0];
   return yytext[0];
 }
+
+<LINE>{DigitalWrite} {
+  printToken("DigitalWrite");
+  return DigitalWrite;
+}
+<LINE>{LOW} {
+  printToken("LOW");
+  return LOW;
+}
+<LINE>{HIGH} {
+  printToken("HIGH");
+  return HIGH;
+}
+<LINE>{Delay} {
+  printToken("Delay");
+  return Delay;
+}
+
 <LINE>{ID}  {
   printToken("id");
   strcpy(yylval.ident, yytext);

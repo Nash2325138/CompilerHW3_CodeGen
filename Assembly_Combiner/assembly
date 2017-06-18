@@ -1,0 +1,105 @@
+
+# ---- Program start
+swi	$fp,	[$sp]
+addi	$sp,	$sp,	-4
+addi	$fp,	$sp,	0
+# ---- Installing symbol: a on $fp+(0)
+addi	$sp,	$sp,	-4
+movi	$r0,	1
+swi	$r0,	[$sp]
+addi	$sp,	$sp,	-4
+# ---- Assigning symbol: "a" to the content of stack top
+lwi	$r0,	[$sp+4]
+swi	$r0,	[$fp+(0)]
+# ---- stack poping
+addi	$sp,	$sp,	4
+# ---- While starts
+L0:
+lwi	$r0,	[$fp+(0)]
+swi	$r0,	[$sp]
+addi $sp, $sp, -4
+movi	$r0,	5
+swi	$r0,	[$sp]
+addi	$sp,	$sp,	-4
+lwi	$r0,	[$sp+8]
+lwi	$r1,	[$sp+4]
+# ----  compare if $r0 < $r1
+slts $r0, $r0, $r1
+# ---- Store the compared result in [$sp+8]
+swi	$r0,	[$sp+8]
+# ---- stack poping
+addi	$sp,	$sp,	4
+# ---- break out while loop if expr is true
+lwi	$r0,	[$sp+4]
+# ---- stack poping
+addi	$sp,	$sp,	4
+beqz	$r0,	L1
+# ---- Installing symbol: b on $fp+(-4)
+addi	$sp,	$sp,	-4
+movi	$r0,	0
+swi	$r0,	[$sp]
+addi	$sp,	$sp,	-4
+# ---- Assigning symbol: "b" to the content of stack top
+lwi	$r0,	[$sp+4]
+swi	$r0,	[$fp+(-4)]
+# ---- stack poping
+addi	$sp,	$sp,	4
+lwi	$r0,	[$fp+(0)]
+swi	$r0,	[$sp]
+addi $sp, $sp, -4
+movi	$r0,	1000
+swi	$r0,	[$sp]
+addi	$sp,	$sp,	-4
+# ----  '*' top two word on stack([$sp+8] * [$sp+4]) and store at [$sp+8]
+lwi	$r0,	[$sp+8]
+lwi	$r1,	[$sp+4]
+mul	$r0,	$r0,	$r1
+swi	$r0,	[$sp+8]
+# ---- stack poping
+addi	$sp,	$sp,	4
+# ---- Assigning symbol: "b" to the content of stack top
+lwi	$r0,	[$sp+4]
+swi	$r0,	[$fp+(-4)]
+# ---- stack poping
+addi	$sp,	$sp,	4
+# ---- DigitalWrite HIGH
+movi	$r0,	13
+movi	$r1,	1
+bal	digitalWrite
+# ---- Delay b
+lwi	$r0,	[$fp+(-4)]
+bal	delay
+# ---- DigitalWrite LOW
+movi	$r0,	13
+movi	$r1,	0
+bal	digitalWrite
+# ---- Delay b
+lwi	$r0,	[$fp+(-4)]
+bal	delay
+lwi	$r0,	[$fp+(0)]
+swi	$r0,	[$sp]
+addi $sp, $sp, -4
+movi	$r0,	1
+swi	$r0,	[$sp]
+addi	$sp,	$sp,	-4
+# ----  '+' top two word on stack([$sp+8] + [$sp+4]) and store at [$sp+8]
+lwi	$r0,	[$sp+8]
+lwi	$r1,	[$sp+4]
+add	$r0,	$r0,	$r1
+swi	$r0,	[$sp+8]
+# ---- stack poping
+addi	$sp,	$sp,	4
+# ---- Assigning symbol: "a" to the content of stack top
+lwi	$r0,	[$sp+4]
+swi	$r0,	[$fp+(0)]
+# ---- stack poping
+addi	$sp,	$sp,	4
+j L0
+L1:
+# ---- While ends
+movi	$r0,	0
+swi	$r0,	[$sp]
+addi	$sp,	$sp,	-4
+# ---- Program stop
+addi	$sp,	$fp,	4
+lwi	$fp,	[$sp]
